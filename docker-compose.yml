@@ -1,0 +1,44 @@
+version: '3.9'
+services:
+  fronted:
+    build: ./beefy-frontend
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    links:
+    - influxdb
+    restart: unless-stopped
+  influxdb:
+    image: influxdb:2.1-alpine
+    environment:
+    - DOCKER_INFLUXDB_INIT_USERNAME=${INF_USER}
+    - DOCKER_INFLUXDB_INIT_PASSWORD=${INF_PASS}
+    - DOCKER_INFLUXDB_INIT_ORG=${INF_ORG}
+    - DOCKER_INFLUXDB_INIT_BUCKET=${INF_BUCKET}
+    - DOCKER_INFLUXDB_INIT_MODE=${INF_MODE}
+    - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INF_TOKEN}
+    ports:
+    - 8086:8086
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - '3030:3000'
+    depends_on:
+      - influxdb
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+    volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources/
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
+volumes:
+  influx-data:
+
+  grafana-data:
+
