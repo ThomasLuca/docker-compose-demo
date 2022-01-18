@@ -36,7 +36,7 @@ services:
       - GF_AUTH_BASIC_ENABLED=false
     volumes:
       - ./grafana/datasources:/etc/grafana/provisioning/datasources/
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
 volumes:
   influx-data:
 
